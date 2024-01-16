@@ -19,6 +19,16 @@ import torch.nn.functional as F
 
 from torch import nn
 
+try:
+    from fairseq2.models.llama.loader import create_llama_checkpoint
+except ImportError:
+
+    def create_llama_checkpoint(**kwargs):
+        raise NotImplementedError(
+            "Please install fairseq2 with `pip install fairseq2` or `conda install fairseq2`."
+        )
+
+
 from ..model_base import EagerModelBase
 
 
@@ -358,6 +368,9 @@ class Llama2Model(EagerModelBase):
             max_batch_size=max_batch_size,
             **params,
         )
+        if kwargs.get("fairseq2", False):
+            print("Using fairseq2 checkpoint")
+            checkpoint = create_llama_checkpoint(checkpoint=checkpoint)
         self.model_ = Transformer(model_args)
         self.model_.load_state_dict(
             checkpoint, strict=False

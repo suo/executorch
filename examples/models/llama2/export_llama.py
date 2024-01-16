@@ -36,11 +36,16 @@ def main() -> None:
     parser.add_argument(
         "-p", "--params", default=ckpt_dir / "demo_config.json", help="config.json"
     )
+    parser.add_argument("-2", "--fairseq2", action="store_true")
 
     args = parser.parse_args()
 
     model, example_inputs, _ = EagerModelFactory.create_model(
-        "llama2", "Llama2Model", checkpoint=args.checkpoint, params=args.params
+        "llama2",
+        "Llama2Model",
+        checkpoint=args.checkpoint,
+        params=args.params,
+        fairseq2=args.fairseq2,
     )
 
     dim = torch.export.Dim("token_dim", max=model.params.max_seq_len - 1)
